@@ -25,13 +25,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Si es ejecución manual, enviar confirmación a Telegram
-        if: github.event_name == 'workflow_dispatch'
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      - name: Verificar e informar estado de secretos de Telegram
         run: |
-          python main.py --test-telegram
+          if [ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]; then
+            echo "⚠️ ADVERTENCIA: TELEGRAM_BOT_TOKEN no se ha configurado en GitHub Secrets."
+          else
+            echo "✅ TELEGRAM_BOT_TOKEN detectado en GitHub Secrets."
+          fi
+          if [ -z "${{ secrets.TELEGRAM_CHAT_ID }}" ]; then
+            echo "⚠️ ADVERTENCIA: TELEGRAM_CHAT_ID no se ha configurado en GitHub Secrets."
+          else
+            echo "✅ TELEGRAM_CHAT_ID detectado en GitHub Secrets."
+          fi
 
       - name: Ejecutar Rastreador de Vivienda y Alertas por Telegram
         env:
