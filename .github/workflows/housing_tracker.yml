@@ -25,26 +25,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Verificar e informar estado de secretos de Telegram
-        run: |
-          if [ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]; then
-            echo "⚠️ ADVERTENCIA: TELEGRAM_BOT_TOKEN no se ha configurado en GitHub Secrets."
-          else
-            echo "✅ TELEGRAM_BOT_TOKEN detectado en GitHub Secrets."
-          fi
-          if [ -z "${{ secrets.TELEGRAM_CHAT_ID }}" ]; then
-            echo "⚠️ ADVERTENCIA: TELEGRAM_CHAT_ID no se ha configurado en GitHub Secrets."
-          else
-            echo "✅ TELEGRAM_CHAT_ID detectado en GitHub Secrets."
-          fi
-
       - name: Ejecutar Rastreador de Vivienda y Alertas por Telegram
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           MAX_PRICE_EUR: ${{ secrets.MAX_PRICE_EUR || '300000' }}
         run: |
-          python main.py
+          python main.py --notify-summary
           python export_html.py
 
       - name: Guardar Novedades y Base de Datos en el Repositorio

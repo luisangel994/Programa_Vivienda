@@ -106,6 +106,7 @@ def run_pipeline():
     sync_active_status(current_run_ids)
 
     logger.info(f"=== PIPELINE COMPLETADO. Nuevas novedades registradas: {new_notices_count} ===")
+    return new_notices_count
 
 def main():
     parser = argparse.ArgumentParser(description="Bot de Monitorización de Vivienda Protegida (VPO/VPP) en Valencia")
@@ -114,6 +115,7 @@ def main():
     parser.add_argument("--test-telegram", action="store_true", help="Enviar un mensaje de prueba al bot de Telegram")
     parser.add_argument("--list", action="store_true", help="Listar últimas novedades guardadas en la base de datos")
     parser.add_argument("--html", action="store_true", help="Generar un informe visual en HTML y abrirlo en el navegador web")
+    parser.add_argument("--notify-summary", action="store_true", help="Enviar un resumen de ejecución a Telegram")
 
     args = parser.parse_args()
 
