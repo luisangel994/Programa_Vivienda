@@ -1,0 +1,14 @@
+# Entorno y Secretos
+.env
+*.env
+.venv/
+env/
+venv/
+
+# Caches de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log

@@ -1,0 +1,47 @@
+name: Valencia Housing Tracker Auto-Run
+
+on:
+  schedule:
+    # Se ejecuta todos los días a las 08:00 AM (UTC)
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Permite ejecutarlo manualmente con un clic desde GitHub
+
+jobs:
+  track-housing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Código del Repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Entorno Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Dar permiso a la base de datos
+        run: touch housing.db
+
+      - name: Instalación de Dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ejecutar Rastreador de Vivienda y Alertas por Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          MAX_PRICE_EUR: ${{ secrets.MAX_PRICE_EUR || '300000' }}
+        run: |
+          python main.py
+          python export_html.py
+
+      - name: Guardar Novedades y Base de Datos en el Repositorio
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add housing.db report.html
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update housing DB and report.html" && git push)

@@ -1,0 +1,3800 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promociones de Vivienda en Valencia (VPO / Obra Nueva)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border-light: #e2e8f0;
+            --badge-sale: #7c3aed; /* Púrpura EN VENTA */
+            --badge-const: #d97706; /* Dorado INICIO CONSTRUCCIÓN */
+            --badge-coop: #2563eb;  /* Azul COOPERATIVA */
+            --badge-land: #059669;  /* Verde LICITACIÓN SUELO */
+            --badge-delivery: #4f46e5; /* Índigo ENTREGA DE VIVIENDAS */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        /* Header Principal */
+        .header-box {
+            background: white;
+            border-radius: 20px;
+            padding: 24px 30px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .main-title {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .main-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Barra de Filtros y Ordenación */
+        .filters-toolbar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .filter-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .select-control, .input-control {
+            padding: 10px 14px;
+            border: 1.5px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            background: white;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .select-control:focus, .input-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Counter Bar */
+        .counter-bar {
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .counter-bar span {
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        /* Grid Layout de Tarjetas */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 30px;
+        }
+
+        /* Tarjeta */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.09);
+        }
+
+        .card-image-wrap {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background-color: #cbd5e1;
+        }
+
+        .card-image-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover .card-image-wrap img {
+            transform: scale(1.04);
+        }
+
+        .badge-status {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .badge-sale { background-color: var(--badge-sale); }
+        .badge-const { background-color: var(--badge-const); }
+        .badge-coop { background-color: var(--badge-coop); }
+        .badge-land { background-color: var(--badge-land); }
+        .badge-delivery { background-color: var(--badge-delivery); }
+
+        .media-badge {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card-body {
+            padding: 20px 24px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .units-count {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .location-tag {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.35;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .price-text {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 16px;
+        }
+
+        .features-box {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 14px;
+            background-color: #fafafa;
+            margin-top: auto;
+        }
+
+        .type-pill {
+            display: inline-block;
+            border: 1px solid #bfdbfe;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .features-row {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            font-size: 0.88rem;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .card-footer {
+            padding: 16px 24px 22px 24px;
+            text-align: center;
+            background: white;
+        }
+
+        .btn-action {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.98rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: gap 0.2s, color 0.2s;
+        }
+
+        .btn-action:hover {
+            color: var(--primary-hover);
+            gap: 12px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-box">
+        <div class="top-nav">
+            <div>
+                <h1 class="main-title">🏢 Promociones Valencia & Área Metropolitana</h1>
+                <div class="main-subtitle">Filtro de VPO / VPP y Obra Nueva hasta 300,000 €</div>
+            </div>
+        </div>
+
+        <div class="filters-toolbar">
+            <div class="filter-group">
+                <label class="filter-label">🔍 Buscar Texto</label>
+                <input type="text" id="searchInput" class="input-control" onkeyup="applyFiltersAndSort()" placeholder="Municipio, barrio o promotora...">
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">🏷️ Estado de la Promoción</label>
+                <select id="statusFilter" class="select-control" onchange="applyFiltersAndSort()">
+                    <option value="all">Todos los estados</option>
+                    <option value="entrega">🔑 Entrega de viviendas</option>
+                    <option value="construccion">🏗️ Inicio de construcción</option>
+                    <option value="venta">🏷️ En venta</option>
+                    <option value="cooperativa">🤝 Cooperativa</option>
+                    <option value="licitacion">📜 Licitación / Oficial GVA</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">🏢 Tipo de Fuente</label>
+                <select id="sourceFilter" class="select-control" onchange="applyFiltersAndSort()">
+                    <option value="all">Todas las fuentes</option>
+                    <option value="promotora">🏢 Promotoras (Metrovacesa, Olivares...)</option>
+                    <option value="cooperativa">🤝 Cooperativas (SFI, Prygesa...)</option>
+                    <option value="oficial">🏛️ Oficial GVA / EVha / PLACSP</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">↕️ Ordenar Publicaciones</label>
+                <select id="sortOrder" class="select-control" onchange="applyFiltersAndSort()">
+                    <option value="date-desc">🕒 Más recientes primero</option>
+                    <option value="date-asc">⏳ Más antiguas primero</option>
+                    <option value="price-asc">💰 Precio: menor a mayor</option>
+                    <option value="price-desc">💰 Precio: mayor a menor</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="counter-bar">
+        Mostrando <span id="visibleCount">70</span> de <span id="totalCount">70</span> oportunidades encontradas
+    </div>
+
+    <div class="grid" id="cardsGrid">
+
+        <div class="card" 
+             data-index="0"
+             data-date="2026-08-20 17:11:21.966269" 
+             data-price="0.0" 
+             data-status="en venta" 
+             data-source-category="promotora"
+             data-search="residencial sagunto metrovacesa (valencia) valencia / sagunto/sagunt sagunto configura tu vivienda 135">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="RESIDENCIAL SAGUNTO" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-sale">
+                    <span>🏷️</span> EN VENTA
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">118 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / SAGUNTO/SAGUNT SAGUNTO CONFIGURA TU VIVIENDA 135</div>
+                <h3 class="card-title">RESIDENCIAL SAGUNTO</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-4 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/lcqe/sagunto" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="1"
+             data-date="2026-08-20 17:11:21.961180" 
+             data-price="0.0" 
+             data-status="entrega de viviendas" 
+             data-source-category="promotora"
+             data-search="residencial patraix consultar precio plurifamiliar 244 369 627 867 consultar 135 665 consu metrovacesa (valencia) valencia / valencia residencial patraix consultar precio plurifamiliar 244 369 627 867 consultar 135 665 consultar ver promociã³n 135">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80" alt="RESIDENCIAL PATRAIX CONSULTAR PRECIO PLURIFAMILIAR 244 369 627 867 CONSULTAR 135 665 CONSU" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-delivery">
+                    <span>🔑</span> ENTREGA DE VIVIENDAS
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">144 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA RESIDENCIAL PATRAIX CONSULTAR PRECIO PLURIFAMILIAR 244 369 627 867 CONSULTAR 135 665 CONSULTAR VER PROMOCIÃ³N 135</div>
+                <h3 class="card-title">RESIDENCIAL PATRAIX CONSULTAR PRECIO PLURIFAMILIAR 244 369 627 867 CONSULTAR 135 665 CONSU</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-4 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/valencia-capital/residencial-patraix" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="2"
+             data-date="2026-08-20 17:11:21.955280" 
+             data-price="0.0" 
+             data-status="entrega de viviendas" 
+             data-source-category="promotora"
+             data-search="residencial nova urbe desde 191 metrovacesa (valencia) valencia / valencia residencial nova urbe desde 191">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="RESIDENCIAL NOVA URBE DESDE 191" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-delivery">
+                    <span>🔑</span> ENTREGA DE VIVIENDAS
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">50 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA RESIDENCIAL NOVA URBE DESDE 191</div>
+                <h3 class="card-title">RESIDENCIAL NOVA URBE DESDE 191</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-4 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/valencia-capital/residencial-nova-urbe" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="3"
+             data-date="2026-08-20 17:11:21.950297" 
+             data-price="0.0" 
+             data-status="entrega de viviendas" 
+             data-source-category="promotora"
+             data-search="residencial moli mistral metrovacesa (valencia) valencia / quart de poblet molã">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="RESIDENCIAL MOLI MISTRAL" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-delivery">
+                    <span>🔑</span> ENTREGA DE VIVIENDAS
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">120 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / QUART DE POBLET MOLÃ</div>
+                <h3 class="card-title">RESIDENCIAL MOLI MISTRAL</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 0-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/quart-de-poblet/moli-mistral" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="4"
+             data-date="2026-08-20 17:11:21.944860" 
+             data-price="0.0" 
+             data-status="entrega de viviendas" 
+             data-source-category="promotora"
+             data-search="residencial allegro desde 410 metrovacesa (valencia) valencia / sagunto/sagunt residencial allegro desde 410">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80" alt="RESIDENCIAL ALLEGRO DESDE 410" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-delivery">
+                    <span>🔑</span> ENTREGA DE VIVIENDAS
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">110 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / SAGUNTO/SAGUNT RESIDENCIAL ALLEGRO DESDE 410</div>
+                <h3 class="card-title">RESIDENCIAL ALLEGRO DESDE 410</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/sagunto-sagunt/residencial-allegro" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="5"
+             data-date="2026-08-20 17:11:21.937862" 
+             data-price="0.0" 
+             data-status="inicio construcción" 
+             data-source-category="promotora"
+             data-search="residencial nova urbe ii desde 303 metrovacesa (valencia) valencia / valencia residencial nova urbe ii desde 303">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="RESIDENCIAL NOVA URBE II DESDE 303" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-const">
+                    <span>🏗️</span> INICIO CONSTRUCCIÓN
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">78 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA RESIDENCIAL NOVA URBE II DESDE 303</div>
+                <h3 class="card-title">RESIDENCIAL NOVA URBE II DESDE 303</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 1-2 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/valencia-capital/residencial-nova-urbe-ii" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="6"
+             data-date="2026-08-20 17:11:21.932797" 
+             data-price="0.0" 
+             data-status="entrega de viviendas" 
+             data-source-category="promotora"
+             data-search="marella puig metrovacesa (valencia) valencia / puig marella puig desde 465">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="MARELLA PUIG" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-delivery">
+                    <span>🔑</span> ENTREGA DE VIVIENDAS
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">19 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / PUIG MARELLA PUIG DESDE 465</div>
+                <h3 class="card-title">MARELLA PUIG</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 4 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/puig/marella-puig" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="7"
+             data-date="2026-08-20 17:11:21.927917" 
+             data-price="0.0" 
+             data-status="inicio construcción" 
+             data-source-category="promotora"
+             data-search="plathea metrovacesa (valencia) valencia / sagunto/sagunt plathea desde 201">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=800&q=80" alt="PLATHEA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-const">
+                    <span>🏗️</span> INICIO CONSTRUCCIÓN
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">157 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / SAGUNTO/SAGUNT PLATHEA DESDE 201</div>
+                <h3 class="card-title">PLATHEA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/sagunto-sagunt/plathea" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="8"
+             data-date="2026-08-20 17:11:21.922355" 
+             data-price="0.0" 
+             data-status="inicio construcción" 
+             data-source-category="promotora"
+             data-search="residencial vora consultar precio plurifamiliar 244 369 627 867 consultar 135 665 consulta metrovacesa (valencia) valencia / valencia residencial vora consultar precio plurifamiliar 244 369 627 867 consultar 135 665 consultar ver promociã³n 135">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="RESIDENCIAL VORA CONSULTAR PRECIO PLURIFAMILIAR 244 369 627 867 CONSULTAR 135 665 CONSULTA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-const">
+                    <span>🏗️</span> INICIO CONSTRUCCIÓN
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">98 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA RESIDENCIAL VORA CONSULTAR PRECIO PLURIFAMILIAR 244 369 627 867 CONSULTAR 135 665 CONSULTAR VER PROMOCIÃ³N 135</div>
+                <h3 class="card-title">RESIDENCIAL VORA CONSULTAR PRECIO PLURIFAMILIAR 244 369 627 867 CONSULTAR 135 665 CONSULTA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-4 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/valencia-capital/residencial-vora" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="9"
+             data-date="2026-08-20 17:11:21.917518" 
+             data-price="0.0" 
+             data-status="en venta" 
+             data-source-category="promotora"
+             data-search="residencial nerissa fase 1 desde 220 metrovacesa (valencia) valencia / sagunto/sagunt residencial nerissa fase 1 desde 220">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="RESIDENCIAL NERISSA FASE 1 DESDE 220" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-sale">
+                    <span>🏷️</span> EN VENTA
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">118 Viviendas</div>
+                <div class="location-tag">📍 VALENCIA / SAGUNTO/SAGUNT RESIDENCIAL NERISSA FASE 1 DESDE 220</div>
+                <h3 class="card-title">RESIDENCIAL NERISSA FASE 1 DESDE 220</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-4 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://metrovacesa.com/promociones/valencia/sagunto-sagunt/residencial-nerissa" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="10"
+             data-date="2026-08-20 17:11:21.912893" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="valencia@libragp.com libra gestión de proyectos valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="valencia@libragp.com" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">valencia@libragp.com</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="mailto:valencia@libragp.com" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="11"
+             data-date="2026-08-20 17:11:21.906282" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="llum malilla libra gestión de proyectos valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="Llum Malilla" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Llum Malilla</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://libragp.com/obra-nueva-valencia/llum-malilla/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="12"
+             data-date="2026-08-20 17:11:21.901509" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="llum malilla 2 libra gestión de proyectos valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="Llum Malilla 2" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Llum Malilla 2</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://libragp.com/obra-nueva-valencia/llum-malilla-2/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="13"
+             data-date="2026-08-20 17:11:21.894920" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="terrazas de alfahuir libra gestión de proyectos valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Terrazas de Alfahuir" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Terrazas de Alfahuir</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://libragp.com/obra-nueva-valencia/terrazas-de-alfahuir/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="14"
+             data-date="2026-08-20 17:11:21.890233" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="residencial benlliure libra gestión de proyectos valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Residencial Benlliure" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Residencial Benlliure</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://libragp.com/obra-nueva-valencia/residencial-benlliure/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="15"
+             data-date="2026-08-20 17:11:21.884982" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="mirador de gaia libra gestión de proyectos valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80" alt="Mirador de Gaia" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Mirador de Gaia</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://libragp.com/obra-nueva-valencia/mirador-de-gaia/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="16"
+             data-date="2026-08-20 17:11:21.880055" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="terrazas del turia libra gestión de proyectos valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="Terrazas del Turia" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Terrazas del Turia</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://libragp.com/obra-nueva-valencia/terrazas-del-turia/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="17"
+             data-date="2026-08-20 17:11:21.873740" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="políticas de privacidad fecovi (federación cooperativas cv) valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="Políticas de privacidad" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Políticas de privacidad</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://fecovi.es/cooperativas-afiliadas/politicas-de-privacidad" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="18"
+             data-date="2026-08-20 17:11:21.868850" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="aviso legal fecovi (federación cooperativas cv) valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Aviso Legal" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Aviso Legal</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://fecovi.es/cooperativas-afiliadas/aviso-legal" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="19"
+             data-date="2026-08-20 17:11:21.864476" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="https: //www.prygesa.es/venta-de-viviendas/maritim-plaza-2 fecovi (federación cooperativas cv) valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="https: //www.prygesa.es/venta-de-viviendas/maritim-plaza-2" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">https: //www.prygesa.es/venta-de-viviendas/maritim-plaza-2</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.prygesa.es/venta-de-viviendas/maritim-plaza-2" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="20"
+             data-date="2026-08-20 17:11:21.859874" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="https: //www.prygesa.es/venta-de-viviendas/quatre-carreres-plaza fecovi (federación cooperativas cv) valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80" alt="https: //www.prygesa.es/venta-de-viviendas/quatre-carreres-plaza" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">https: //www.prygesa.es/venta-de-viviendas/quatre-carreres-plaza</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.prygesa.es/venta-de-viviendas/quatre-carreres-plaza" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="21"
+             data-date="2026-08-20 17:11:21.854810" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="https: //cooperativaresistir.es/ fecovi (federación cooperativas cv) valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="https: //cooperativaresistir.es/" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">https: //cooperativaresistir.es/</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://cooperativaresistir.es/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="22"
+             data-date="2026-08-20 17:11:21.850442" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="cooperativas afiliadas fecovi (federación cooperativas cv) valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Cooperativas Afiliadas" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Cooperativas Afiliadas</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://fecovi.es/cooperativas-afiliadas/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="23"
+             data-date="2026-08-20 17:11:21.845829" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="ayudas a vivienda fecovi (federación cooperativas cv) valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=800&q=80" alt="Ayudas a vivienda" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Ayudas a vivienda</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://fecovi.es/ayudas-vivienda/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="24"
+             data-date="2026-08-20 17:11:21.840283" 
+             data-price="0.0" 
+             data-status="cooperativa vpo" 
+             data-source-category="cooperativa"
+             data-search="ayudas a cooperativas fecovi (federación cooperativas cv) valencia / valencia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=800&q=80" alt="Ayudas a cooperativas" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-coop">
+                    <span>🤝</span> COOPERATIVA VPO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">64 viviendas</div>
+                <div class="location-tag">📍 VALENCIA / VALENCIA</div>
+                <h3 class="card-title">Ayudas a cooperativas</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> 2-3 dormitorios
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Desde 90 m²
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://fecovi.es/ayudas-a-cooperativas/" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="25"
+             data-date="2026-08-20 17:11:21.835682" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat presenta el plan viu en las cámaras de comercio de alicante, castellón y va evha / plan vive valencia capital">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT PRESENTA EL PLAN VIU EN LAS CÁMARAS DE COMERCIO DE ALICANTE, CASTELLÓN Y VA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA CAPITAL</div>
+                <h3 class="card-title">LA GENERALITAT PRESENTA EL PLAN VIU EN LAS CÁMARAS DE COMERCIO DE ALICANTE, CASTELLÓN Y VA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1157" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="26"
+             data-date="2026-08-20 17:11:21.831224" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat y el ayuntamiento de teulada se han reunido para tratar sobre futuras actua evha / plan vive marina alta / teulada">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT Y EL AYUNTAMIENTO DE TEULADA SE HAN REUNIDO PARA TRATAR SOBRE FUTURAS ACTUA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 MARINA ALTA / TEULADA</div>
+                <h3 class="card-title">LA GENERALITAT Y EL AYUNTAMIENTO DE TEULADA SE HAN REUNIDO PARA TRATAR SOBRE FUTURAS ACTUA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1159" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="27"
+             data-date="2026-08-20 17:11:21.826575" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="el consell es informado de la cesión del derecho de superficie de 13 parcelas para constru evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="EL CONSELL ES INFORMADO DE LA CESIÓN DEL DERECHO DE SUPERFICIE DE 13 PARCELAS PARA CONSTRU" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">EL CONSELL ES INFORMADO DE LA CESIÓN DEL DERECHO DE SUPERFICIE DE 13 PARCELAS PARA CONSTRU</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1162" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="28"
+             data-date="2026-08-20 17:11:21.821636" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la vicepresidencia segunda licita el concurso de derecho de superficie para construir 720  evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA VICEPRESIDENCIA SEGUNDA LICITA EL CONCURSO DE DERECHO DE SUPERFICIE PARA CONSTRUIR 720 " loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA VICEPRESIDENCIA SEGUNDA LICITA EL CONCURSO DE DERECHO DE SUPERFICIE PARA CONSTRUIR 720 </h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1164" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="29"
+             data-date="2026-08-20 17:11:21.817167" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat presenta el plan vive ante alcaldes, concejales y técnicos de vivienda del  evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT PRESENTA EL PLAN VIVE ANTE ALCALDES, CONCEJALES Y TÉCNICOS DE VIVIENDA DEL " loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA GENERALITAT PRESENTA EL PLAN VIVE ANTE ALCALDES, CONCEJALES Y TÉCNICOS DE VIVIENDA DEL </h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1169" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="30"
+             data-date="2026-08-20 17:11:21.812645" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="vivienda amplia 15 días el plazo de la licitación del concurso de derecho de superficie pa evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="VIVIENDA AMPLIA 15 DÍAS EL PLAZO DE LA LICITACIÓN DEL CONCURSO DE DERECHO DE SUPERFICIE PA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">VIVIENDA AMPLIA 15 DÍAS EL PLAZO DE LA LICITACIÓN DEL CONCURSO DE DERECHO DE SUPERFICIE PA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1171" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="31"
+             data-date="2026-08-20 17:11:21.806686" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la vicepresidencia segunda presenta el plan vive ante alcaldes, concejales y técnicos de v evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA VICEPRESIDENCIA SEGUNDA PRESENTA EL PLAN VIVE ANTE ALCALDES, CONCEJALES Y TÉCNICOS DE V" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA VICEPRESIDENCIA SEGUNDA PRESENTA EL PLAN VIVE ANTE ALCALDES, CONCEJALES Y TÉCNICOS DE V</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1173" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="32"
+             data-date="2026-08-20 17:11:21.802325" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="carlos mazón: “el plan vive desarrollará 600 viviendas en torrevieja que beneficiarán a má evha / plan vive vega baja / torrevieja">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="CARLOS MAZÓN: “EL PLAN VIVE DESARROLLARÁ 600 VIVIENDAS EN TORREVIEJA QUE BENEFICIARÁN A MÁ" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VEGA BAJA / TORREVIEJA</div>
+                <h3 class="card-title">CARLOS MAZÓN: “EL PLAN VIVE DESARROLLARÁ 600 VIVIENDAS EN TORREVIEJA QUE BENEFICIARÁN A MÁ</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1174" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="33"
+             data-date="2026-08-20 17:11:21.797129" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="carlos mazón: “185 municipios ya se han adherido al plan vive para dar una solución efecti evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="CARLOS MAZÓN: “185 MUNICIPIOS YA SE HAN ADHERIDO AL PLAN VIVE PARA DAR UNA SOLUCIÓN EFECTI" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">CARLOS MAZÓN: “185 MUNICIPIOS YA SE HAN ADHERIDO AL PLAN VIVE PARA DAR UNA SOLUCIÓN EFECTI</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1176" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="34"
+             data-date="2026-08-20 17:11:21.792234" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="susana camarero asegura que el aumento del 48 % de adjudicaciones de vivienda pública a me evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="SUSANA CAMARERO ASEGURA QUE EL AUMENTO DEL 48 % DE ADJUDICACIONES DE VIVIENDA PÚBLICA A ME" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">SUSANA CAMARERO ASEGURA QUE EL AUMENTO DEL 48 % DE ADJUDICACIONES DE VIVIENDA PÚBLICA A ME</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1177" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="35"
+             data-date="2026-08-20 17:11:21.787217" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat inicia en noviembre el proceso de adjudicación de las 184 nuevas viviendas  evha / plan vive valencia / la torre">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT INICIA EN NOVIEMBRE EL PROCESO DE ADJUDICACIÓN DE LAS 184 NUEVAS VIVIENDAS " loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / LA TORRE</div>
+                <h3 class="card-title">LA GENERALITAT INICIA EN NOVIEMBRE EL PROCESO DE ADJUDICACIÓN DE LAS 184 NUEVAS VIVIENDAS </h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1186" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="36"
+             data-date="2026-08-20 17:11:21.782438" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat y el ayuntamiento de xàbia firman la cesión de parcelas para construir vivi evha / plan vive marina alta / xàbia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT Y EL AYUNTAMIENTO DE XÀBIA FIRMAN LA CESIÓN DE PARCELAS PARA CONSTRUIR VIVI" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 MARINA ALTA / XÀBIA</div>
+                <h3 class="card-title">LA GENERALITAT Y EL AYUNTAMIENTO DE XÀBIA FIRMAN LA CESIÓN DE PARCELAS PARA CONSTRUIR VIVI</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1201" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="37"
+             data-date="2026-08-20 17:11:21.776270" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="vivienda presenta las nuevas licitaciones del plan vive en un encuentro con el sector prom evha / plan vive alicante / alacant">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="VIVIENDA PRESENTA LAS NUEVAS LICITACIONES DEL PLAN VIVE EN UN ENCUENTRO CON EL SECTOR PROM" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 ALICANTE / ALACANT</div>
+                <h3 class="card-title">VIVIENDA PRESENTA LAS NUEVAS LICITACIONES DEL PLAN VIVE EN UN ENCUENTRO CON EL SECTOR PROM</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1202" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="38"
+             data-date="2026-08-20 17:11:21.770734" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="vivienda presenta en castellón el nuevo decreto de vpp y las próximas licitaciones del pla evha / plan vive castellón / castelló">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="VIVIENDA PRESENTA EN CASTELLÓN EL NUEVO DECRETO DE VPP Y LAS PRÓXIMAS LICITACIONES DEL PLA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 CASTELLÓN / CASTELLÓ</div>
+                <h3 class="card-title">VIVIENDA PRESENTA EN CASTELLÓN EL NUEVO DECRETO DE VPP Y LAS PRÓXIMAS LICITACIONES DEL PLA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1203" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="39"
+             data-date="2026-08-20 17:11:21.764579" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="el plan vive de la generalitat cumple los objetivos y avanza en la construcción de 3.000 v evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="EL PLAN VIVE DE LA GENERALITAT CUMPLE LOS OBJETIVOS Y AVANZA EN LA CONSTRUCCIÓN DE 3.000 V" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">EL PLAN VIVE DE LA GENERALITAT CUMPLE LOS OBJETIVOS Y AVANZA EN LA CONSTRUCCIÓN DE 3.000 V</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1207" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="40"
+             data-date="2026-08-20 17:11:21.760039" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat y el ayuntamiento de algemesí colaboran en la cesión de suelo para vivienda evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT Y EL AYUNTAMIENTO DE ALGEMESÍ COLABORAN EN LA CESIÓN DE SUELO PARA VIVIENDA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA GENERALITAT Y EL AYUNTAMIENTO DE ALGEMESÍ COLABORAN EN LA CESIÓN DE SUELO PARA VIVIENDA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1209" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="41"
+             data-date="2026-08-20 17:11:21.755317" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat colabora con vinaròs, benicarló y burriana para la gestión de suelo destina evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT COLABORA CON VINARÒS, BENICARLÓ Y BURRIANA PARA LA GESTIÓN DE SUELO DESTINA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA GENERALITAT COLABORA CON VINARÒS, BENICARLÓ Y BURRIANA PARA LA GESTIÓN DE SUELO DESTINA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1210" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="42"
+             data-date="2026-08-20 17:11:21.750625" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="el plan vive toma impulso y más de una treintena de empresas presentan ofertas para la con evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="EL PLAN VIVE TOMA IMPULSO Y MÁS DE UNA TREINTENA DE EMPRESAS PRESENTAN OFERTAS PARA LA CON" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">EL PLAN VIVE TOMA IMPULSO Y MÁS DE UNA TREINTENA DE EMPRESAS PRESENTAN OFERTAS PARA LA CON</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1216" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="43"
+             data-date="2026-08-20 17:11:21.746055" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la asociación española de gestores públicos de vivienda y suelo reconoce la labor de la ev evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA ASOCIACIÓN ESPAÑOLA DE GESTORES PÚBLICOS DE VIVIENDA Y SUELO RECONOCE LA LABOR DE LA EV" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA ASOCIACIÓN ESPAÑOLA DE GESTORES PÚBLICOS DE VIVIENDA Y SUELO RECONOCE LA LABOR DE LA EV</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1232" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="44"
+             data-date="2026-08-20 17:11:21.740688" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="el secretario autonómico de vivienda presenta el balance del plan vive ante los promotores evha / plan vive castellón / castelló">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="EL SECRETARIO AUTONÓMICO DE VIVIENDA PRESENTA EL BALANCE DEL PLAN VIVE ANTE LOS PROMOTORES" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 CASTELLÓN / CASTELLÓ</div>
+                <h3 class="card-title">EL SECRETARIO AUTONÓMICO DE VIVIENDA PRESENTA EL BALANCE DEL PLAN VIVE ANTE LOS PROMOTORES</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1258" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="45"
+             data-date="2026-08-20 17:11:21.735757" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la entidad valenciana de vivienda y suelo regulariza la cesión de cuatro locales a los ayu evha / plan vive valencia capital">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA ENTIDAD VALENCIANA DE VIVIENDA Y SUELO REGULARIZA LA CESIÓN DE CUATRO LOCALES A LOS AYU" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA CAPITAL</div>
+                <h3 class="card-title">LA ENTIDAD VALENCIANA DE VIVIENDA Y SUELO REGULARIZA LA CESIÓN DE CUATRO LOCALES A LOS AYU</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1342" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="46"
+             data-date="2026-08-20 17:11:21.731130" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la entidad valenciana de vivienda y suelo regulariza la cesión de cuatro locales a los ayu evha / plan vive valencia capital">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA ENTIDAD VALENCIANA DE VIVIENDA Y SUELO REGULARIZA LA CESIÓN DE CUATRO LOCALES A LOS AYU" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA CAPITAL</div>
+                <h3 class="card-title">LA ENTIDAD VALENCIANA DE VIVIENDA Y SUELO REGULARIZA LA CESIÓN DE CUATRO LOCALES A LOS AYU</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1271" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="47"
+             data-date="2026-08-20 17:11:21.726564" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="el consell inicia la licitación de las obras para las primeras viviendas de protección púb evha / plan vive l'horta sud / torrent">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="EL CONSELL INICIA LA LICITACIÓN DE LAS OBRAS PARA LAS PRIMERAS VIVIENDAS DE PROTECCIÓN PÚB" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 L'HORTA SUD / TORRENT</div>
+                <h3 class="card-title">EL CONSELL INICIA LA LICITACIÓN DE LAS OBRAS PARA LAS PRIMERAS VIVIENDAS DE PROTECCIÓN PÚB</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1273" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="48"
+             data-date="2026-08-20 17:11:21.721686" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat señala que el plan vive ha propiciado el proceso de adjudicación de 2.212 v evha / plan vive alicante / alacant">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT SEÑALA QUE EL PLAN VIVE HA PROPICIADO EL PROCESO DE ADJUDICACIÓN DE 2.212 V" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 ALICANTE / ALACANT</div>
+                <h3 class="card-title">LA GENERALITAT SEÑALA QUE EL PLAN VIVE HA PROPICIADO EL PROCESO DE ADJUDICACIÓN DE 2.212 V</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1275" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="49"
+             data-date="2026-08-20 17:11:21.717061" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat inicia la adjudicación de viviendas en la torre en las que priorizará a jóv evha / plan vive valencia / la torre">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT INICIA LA ADJUDICACIÓN DE VIVIENDAS EN LA TORRE EN LAS QUE PRIORIZARÁ A JÓV" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / LA TORRE</div>
+                <h3 class="card-title">LA GENERALITAT INICIA LA ADJUDICACIÓN DE VIVIENDAS EN LA TORRE EN LAS QUE PRIORIZARÁ A JÓV</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1277" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="50"
+             data-date="2026-08-20 17:11:21.712017" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la directora de la evha asegura que el plan vive avanza con éxito y es un claro ejemplo de evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA DIRECTORA DE LA EVHA ASEGURA QUE EL PLAN VIVE AVANZA CON ÉXITO Y ES UN CLARO EJEMPLO DE" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA DIRECTORA DE LA EVHA ASEGURA QUE EL PLAN VIVE AVANZA CON ÉXITO Y ES UN CLARO EJEMPLO DE</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1283" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="51"
+             data-date="2026-08-20 17:11:21.705419" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="mazón se reúne con el alcalde de agost, juan josé castelló, para abordar la puesta en marc evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="MAZÓN SE REÚNE CON EL ALCALDE DE AGOST, JUAN JOSÉ CASTELLÓ, PARA ABORDAR LA PUESTA EN MARC" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">MAZÓN SE REÚNE CON EL ALCALDE DE AGOST, JUAN JOSÉ CASTELLÓ, PARA ABORDAR LA PUESTA EN MARC</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1284" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="52"
+             data-date="2026-08-20 17:11:21.700054" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="el consell toma razón de la firma del acuerdo por la vivienda de la comunitat valenciana q evha / plan vive valencia capital">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="EL CONSELL TOMA RAZÓN DE LA FIRMA DEL ACUERDO POR LA VIVIENDA DE LA COMUNITAT VALENCIANA Q" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA CAPITAL</div>
+                <h3 class="card-title">EL CONSELL TOMA RAZÓN DE LA FIRMA DEL ACUERDO POR LA VIVIENDA DE LA COMUNITAT VALENCIANA Q</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1289" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="53"
+             data-date="2026-08-20 17:11:21.694877" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="susana camarero destaca que “gracias al plan vive hemos recuperado la confianza del sector evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="SUSANA CAMARERO DESTACA QUE “GRACIAS AL PLAN VIVE HEMOS RECUPERADO LA CONFIANZA DEL SECTOR" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">SUSANA CAMARERO DESTACA QUE “GRACIAS AL PLAN VIVE HEMOS RECUPERADO LA CONFIANZA DEL SECTOR</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1294" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="54"
+             data-date="2026-08-20 17:11:21.689760" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat presenta en madrid los avances del plan vive para hacer frente al problema  evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT PRESENTA EN MADRID LOS AVANCES DEL PLAN VIVE PARA HACER FRENTE AL PROBLEMA " loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA GENERALITAT PRESENTA EN MADRID LOS AVANCES DEL PLAN VIVE PARA HACER FRENTE AL PROBLEMA </h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1302" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="55"
+             data-date="2026-08-20 17:11:21.685469" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="susana camarero destaca el impulso del plan vive en la provincia de alicante con 3.000 viv evha / plan vive alicante / alacant">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="SUSANA CAMARERO DESTACA EL IMPULSO DEL PLAN VIVE EN LA PROVINCIA DE ALICANTE CON 3.000 VIV" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 ALICANTE / ALACANT</div>
+                <h3 class="card-title">SUSANA CAMARERO DESTACA EL IMPULSO DEL PLAN VIVE EN LA PROVINCIA DE ALICANTE CON 3.000 VIV</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1307" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="56"
+             data-date="2026-08-20 17:11:21.681114" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat avanza en la construcción de vivienda protegida con la adjudicación de 90 i evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT AVANZA EN LA CONSTRUCCIÓN DE VIVIENDA PROTEGIDA CON LA ADJUDICACIÓN DE 90 I" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA GENERALITAT AVANZA EN LA CONSTRUCCIÓN DE VIVIENDA PROTEGIDA CON LA ADJUDICACIÓN DE 90 I</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1312" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="57"
+             data-date="2026-08-20 17:11:21.676003" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat se reúne con las empresas adjudicatarias de las promociones del plan vive p evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT SE REÚNE CON LAS EMPRESAS ADJUDICATARIAS DE LAS PROMOCIONES DEL PLAN VIVE P" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA GENERALITAT SE REÚNE CON LAS EMPRESAS ADJUDICATARIAS DE LAS PROMOCIONES DEL PLAN VIVE P</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1317" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="58"
+             data-date="2026-08-20 17:11:21.670708" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="camarero destaca que el plan vive “convierte suelo público parado en vivienda asequible bl evha / plan vive valencia capital">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="CAMARERO DESTACA QUE EL PLAN VIVE “CONVIERTE SUELO PÚBLICO PARADO EN VIVIENDA ASEQUIBLE BL" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA CAPITAL</div>
+                <h3 class="card-title">CAMARERO DESTACA QUE EL PLAN VIVE “CONVIERTE SUELO PÚBLICO PARADO EN VIVIENDA ASEQUIBLE BL</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1323" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="59"
+             data-date="2026-08-20 17:11:21.666209" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="pérez llorca anuncia que la generalitat reforzará los controles de adjudicación de las vpp evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="PÉREZ LLORCA ANUNCIA QUE LA GENERALITAT REFORZARÁ LOS CONTROLES DE ADJUDICACIÓN DE LAS VPP" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">PÉREZ LLORCA ANUNCIA QUE LA GENERALITAT REFORZARÁ LOS CONTROLES DE ADJUDICACIÓN DE LAS VPP</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1325" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="60"
+             data-date="2026-08-20 17:11:21.661836" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="el secretario autonómico de vivienda destaca el nuevo impulso al plan vive con la presenta evha / plan vive alicante / alacant">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="EL SECRETARIO AUTONÓMICO DE VIVIENDA DESTACA EL NUEVO IMPULSO AL PLAN VIVE CON LA PRESENTA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 ALICANTE / ALACANT</div>
+                <h3 class="card-title">EL SECRETARIO AUTONÓMICO DE VIVIENDA DESTACA EL NUEVO IMPULSO AL PLAN VIVE CON LA PRESENTA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1326" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="61"
+             data-date="2026-08-20 17:11:21.657086" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="el secretario autonómico de vivienda resalta que “el plan vive y los planes de las entidad evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="EL SECRETARIO AUTONÓMICO DE VIVIENDA RESALTA QUE “EL PLAN VIVE Y LOS PLANES DE LAS ENTIDAD" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">EL SECRETARIO AUTONÓMICO DE VIVIENDA RESALTA QUE “EL PLAN VIVE Y LOS PLANES DE LAS ENTIDAD</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1327" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="62"
+             data-date="2026-08-20 17:11:21.652674" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la construcción de las primeras viviendas protegidas industrializadas avanza con la licita evha / plan vive l'horta sud / torrent">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA CONSTRUCCIÓN DE LAS PRIMERAS VIVIENDAS PROTEGIDAS INDUSTRIALIZADAS AVANZA CON LA LICITA" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 L'HORTA SUD / TORRENT</div>
+                <h3 class="card-title">LA CONSTRUCCIÓN DE LAS PRIMERAS VIVIENDAS PROTEGIDAS INDUSTRIALIZADAS AVANZA CON LA LICITA</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1328" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="63"
+             data-date="2026-08-20 17:11:21.648300" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat inicia la adjudicación para la construcción de una treintena de viviendas i evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT INICIA LA ADJUDICACIÓN PARA LA CONSTRUCCIÓN DE UNA TREINTENA DE VIVIENDAS I" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA GENERALITAT INICIA LA ADJUDICACIÓN PARA LA CONSTRUCCIÓN DE UNA TREINTENA DE VIVIENDAS I</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1331" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="64"
+             data-date="2026-08-20 17:11:21.643332" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="un total de siete empresas se presentan a la licitación de la generalitat para construir m evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="UN TOTAL DE SIETE EMPRESAS SE PRESENTAN A LA LICITACIÓN DE LA GENERALITAT PARA CONSTRUIR M" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">UN TOTAL DE SIETE EMPRESAS SE PRESENTAN A LA LICITACIÓN DE LA GENERALITAT PARA CONSTRUIR M</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1334" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="65"
+             data-date="2026-08-20 17:11:21.637895" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="camarero subraya que el plan vive avanza para generar una mayor oferta que permita equilib evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="CAMARERO SUBRAYA QUE EL PLAN VIVE AVANZA PARA GENERAR UNA MAYOR OFERTA QUE PERMITA EQUILIB" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">CAMARERO SUBRAYA QUE EL PLAN VIVE AVANZA PARA GENERAR UNA MAYOR OFERTA QUE PERMITA EQUILIB</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1351" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="66"
+             data-date="2026-08-20 17:11:21.633438" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="camarero destaca que el plan vive genera una mayor oferta, agiliza trámites y moviliza sue evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="CAMARERO DESTACA QUE EL PLAN VIVE GENERA UNA MAYOR OFERTA, AGILIZA TRÁMITES Y MOVILIZA SUE" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">CAMARERO DESTACA QUE EL PLAN VIVE GENERA UNA MAYOR OFERTA, AGILIZA TRÁMITES Y MOVILIZA SUE</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1353" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="67"
+             data-date="2026-08-20 17:11:21.621788" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="la generalitat refuerza los mecanismos de control en la adjudicación de viviendas protegid evha / plan vive valencia / provincia">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="LA GENERALITAT REFUERZA LOS MECANISMOS DE CONTROL EN LA ADJUDICACIÓN DE VIVIENDAS PROTEGID" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 VALENCIA / PROVINCIA</div>
+                <h3 class="card-title">LA GENERALITAT REFUERZA LOS MECANISMOS DE CONTROL EN LA ADJUDICACIÓN DE VIVIENDAS PROTEGID</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1355" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="68"
+             data-date="2026-08-20 17:11:21.617104" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="susana camarero destaca el progreso del plan vive en la provincia de alicante con cerca de evha / plan vive alicante / alacant">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="SUSANA CAMARERO DESTACA EL PROGRESO DEL PLAN VIVE EN LA PROVINCIA DE ALICANTE CON CERCA DE" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 ALICANTE / ALACANT</div>
+                <h3 class="card-title">SUSANA CAMARERO DESTACA EL PROGRESO DEL PLAN VIVE EN LA PROVINCIA DE ALICANTE CON CERCA DE</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1366" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card" 
+             data-index="69"
+             data-date="2026-08-20 17:11:21.611885" 
+             data-price="0.0" 
+             data-status="licitación suelo" 
+             data-source-category="oficial"
+             data-search="un total de siete empresas optan a construir más de 50 vpp dentro del plan vive de la gene evha / plan vive alicante / alacant">
+            <div class="card-image-wrap">
+                <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="UN TOTAL DE SIETE EMPRESAS OPTAN A CONSTRUIR MÁS DE 50 VPP DENTRO DEL PLAN VIVE DE LA GENE" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'">
+                <div class="badge-status badge-land">
+                    <span>📜</span> LICITACIÓN SUELO
+                </div>
+                <div class="media-badge">
+                    <span>▶</span> Video / Galería
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="units-count">Parcela / Licitación</div>
+                <div class="location-tag">📍 ALICANTE / ALACANT</div>
+                <h3 class="card-title">UN TOTAL DE SIETE EMPRESAS OPTAN A CONSTRUIR MÁS DE 50 VPP DENTRO DEL PLAN VIVE DE LA GENE</h3>
+                
+                <div class="price-text">Consultar precio</div>
+
+                <div class="features-box">
+                    <span class="type-pill">PLURIFAMILIAR / VPO</span>
+                    <div class="features-row">
+                        <div class="feature-item">
+                            <span>🛏️</span> Plurifamiliar VPO
+                        </div>
+                        <div class="feature-item">
+                            <span>📐</span> Suelo Residencial
+                        </div>
+                    </div>
+                    <!-- Detalles adicionales de la parcela, calle o concurso -->
+                    <div style="font-size: 0.78rem; color: #64748b; margin-top: 8px; font-weight: 600; border-top: 1px dashed #cbd5e1; padding-top: 6px;">
+                        Detalles: Licitación de Suelo Residencial / VPO
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <a href="https://www.evha.es/portal/castellano/prensa-noticia.php?id=1367" target="_blank" class="btn-action">
+                    Ver promoción <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        Buscador de Viviendas Protegidas y Promociones en Valencia &bull; Filtros y Ordenación Interactiva
+    </footer>
+</div>
+
+<script>
+function applyFiltersAndSort() {
+    let searchInput = document.getElementById('searchInput').value.toLowerCase();
+    let statusFilter = document.getElementById('statusFilter').value;
+    let sourceFilter = document.getElementById('sourceFilter').value;
+    let sortOrder = document.getElementById('sortOrder').value;
+
+    let grid = document.getElementById('cardsGrid');
+    let cards = Array.from(grid.children);
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        let textMatch = card.getAttribute('data-search').includes(searchInput);
+        
+        let cardStatus = card.getAttribute('data-status');
+        let statusMatch = (statusFilter === 'all') || 
+            (statusFilter === 'entrega' && cardStatus.includes('entrega')) ||
+            (statusFilter === 'construccion' && cardStatus.includes('construcc')) ||
+            (statusFilter === 'venta' && cardStatus.includes('venta')) ||
+            (statusFilter === 'cooperativa' && cardStatus.includes('coop')) ||
+            (statusFilter === 'licitacion' && cardStatus.includes('licitac'));
+
+        let cardSourceCat = card.getAttribute('data-source-category');
+        let sourceMatch = (sourceFilter === 'all') || (cardSourceCat === sourceFilter);
+
+        if (textMatch && statusMatch && sourceMatch) {
+            card.style.display = "flex";
+            visibleCount++;
+        } else {
+            card.style.display = "none";
+        }
+    });
+
+    document.getElementById('visibleCount').innerText = visibleCount;
+
+    // Ordenación dinámica de elementos visible e invisibles
+    cards.sort((a, b) => {
+        if (sortOrder === 'date-desc') {
+            return parseInt(b.getAttribute('data-index')) - parseInt(a.getAttribute('data-index'));
+        } else if (sortOrder === 'date-asc') {
+            return parseInt(a.getAttribute('data-index')) - parseInt(b.getAttribute('data-index'));
+        } else if (sortOrder === 'price-asc') {
+            let pA = parseFloat(a.getAttribute('data-price')) || 9999999;
+            let pB = parseFloat(b.getAttribute('data-price')) || 9999999;
+            return pA - pB;
+        } else if (sortOrder === 'price-desc') {
+            let pA = parseFloat(a.getAttribute('data-price')) || 0;
+            let pB = parseFloat(b.getAttribute('data-price')) || 0;
+            return pB - pA;
+        }
+        return 0;
+    });
+
+    cards.forEach(card => grid.appendChild(card));
+}
+
+// Ejecutar ordenación inicial (más recientes primero)
+window.onload = function() {
+    applyFiltersAndSort();
+};
+</script>
+
+</body>
+</html>
