@@ -19,29 +19,35 @@ class TelegramNotifier:
         return bool(self.token and self.chat_id)
 
     def send_message(self, text: str) -> bool:
-        """Envia un mensaje de texto formateado en HTML a Telegram."""
+        """Envia un mensaje de texto formateado en HTML a uno o varios Chat IDs de Telegram."""
         if not self.is_configured():
             logger.warning("Telegram Bot no configurado. Omitiendo envío (TOKEN o CHAT_ID faltantes en .env).")
             return False
 
-        payload = {
-            "chat_id": self.chat_id,
-            "text": text,
-            "parse_mode": "HTML",
-            "disable_web_page_preview": False
-        }
+        # Separar por comas para soportar varios destinatarios (ej: "190425566,987654321")
+        target_chat_ids = [cid.strip() for cid in str(self.chat_id).split(",") if cid.strip()]
+        overall_success = True
 
-        try:
-            resp = requests.post(self.api_url, json=payload, timeout=10)
-            if resp.status_code == 200 and resp.json().get("ok"):
-                logger.info("Mensaje enviado correctamente a Telegram.")
-                return True
-            else:
-                logger.error(f"Error al enviar mensaje a Telegram: {resp.status_code} - {resp.text}")
-                return False
-        except Exception as e:
-            logger.error(f"Excepción al conectar con la API de Telegram: {e}")
-            return False
+        for cid in target_chat_ids:
+            payload = {
+                "chat_id": cid,
+                "text": text,
+                "parse_mode": "HTML",
+                "disable_web_page_preview": False
+            }
+
+            try:
+                resp = requests.post(self.api_url, json=payload, timeout=10)
+                if resp.status_code == 200 and resp.json().get("ok"):
+                    logger.info(f"Mensaje enviado correctamente a Telegram (Chat ID: {cid}).")
+                else:
+                    logger.error(f"Error al enviar mensaje a Telegram ({cid}): {resp.status_code} - {resp.text}")
+                    overall_success = False
+            except Exception as e:
+                logger.error(f"Excepción al conectar con la API de Telegram ({cid}): {e}")
+                overall_success = False
+
+        return overall_success
 
     def notify_item(self, item: NoticeItem) -> bool:
         """Formatea un NoticeItem y lo envía a Telegram."""
