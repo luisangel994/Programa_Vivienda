@@ -47,14 +47,18 @@ class TelegramNotifier:
         """Formatea un NoticeItem y lo envía a Telegram."""
         price_str = f"{item.price:,.2f} €" if item.price > 0 else "Por consultar / Pendiente pliego"
 
+        # Enlace público al catálogo HTML interactivo
+        dashboard_url = "https://raw.githack.com/luisangel994/Programa_Vivienda/main/report.html"
+
         msg = (
-            f"🚨 <b>NUEVA PROMOCIÓN / SUELO DETECTADO</b>\n\n"
+            f"🚨 <b>¡NUEVA OPORTUNIDAD EN VALENCIA!</b>\n\n"
+            f"🏠 <b>{item.title}</b>\n"
+            f"🏷️ <b>Estado:</b> {item.notice_type}\n"
             f"📍 <b>Ubicación:</b> {item.location}\n"
-            f"🏢 <b>Promotora / Fuente:</b> {item.source}\n"
-            f"🏷️ <b>Tipo:</b> {item.notice_type}\n"
-            f"📌 <b>Título:</b> {item.title}\n"
-            f"💰 <b>Precio Máx / Estimado:</b> {price_str}\n"
-            f"🔗 <b>Enlace directo:</b> <a href=\"{item.url}\">Ver Ficha / Pliego</a>\n"
+            f"💰 <b>Precio:</b> {price_str}\n"
+            f"🏢 <b>Fuente:</b> {item.source}\n\n"
+            f"🔗 <a href='{item.url}'>Ver Ficha Original</a>\n"
+            f"🌐 <b><a href='{dashboard_url}'>Ver Catálogo Completo (Web HTML)</a></b>"
         )
         return self.send_message(msg)
 

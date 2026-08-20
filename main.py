@@ -138,7 +138,13 @@ def main():
             print("ERROR: Telegram no configurado. Revisa tu archivo .env (TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID).")
             sys.exit(1)
         print("Enviando mensaje de prueba a Telegram...")
-        if notifier.send_test_notification():
+        dashboard_url = "https://raw.githack.com/luisangel994/Programa_Vivienda/main/report.html"
+        test_msg = (
+            f"<b>🤖 Prueba de Conexión: Bot de Vivienda Valencia</b>\n\n"
+            f"¡El sistema de alertas está correctamente configurado y funcionando!\n\n"
+            f"🌐 <b><a href='{dashboard_url}'>VER CATÁLOGO DE VIVIENDAS (WEB HTML)</a></b>"
+        )
+        if notifier.send_message(test_msg):
             print("¡Mensaje enviado con éxito! Revisa tu Telegram.")
         else:
             print("Error al enviar el mensaje de prueba. Revisa el log.")
@@ -163,7 +169,20 @@ def main():
             logger.info(f"Esperando {LOOP_INTERVAL_SECONDS} segundos para la próxima comprobación...")
             time.sleep(LOOP_INTERVAL_SECONDS)
     else:
-        run_pipeline()
+        new_count = run_pipeline()
+        if args.notify_summary:
+            from database import get_recent_notices
+            total_active = len(get_recent_notices(only_active=True))
+            dashboard_url = "https://raw.githack.com/luisangel994/Programa_Vivienda/main/report.html"
+            notifier = TelegramNotifier()
+            summary_msg = (
+                f"<b>🤖 Rastreador de Vivienda en Valencia</b>\n\n"
+                f"✅ Buscador ejecutado con éxito en la nube.\n"
+                f"📊 Oportunidades activas en catálogo: <b>{total_active}</b>\n"
+                f"🚨 Novedades registradas hoy: <b>{new_count}</b>\n\n"
+                f"🌐 <b><a href='{dashboard_url}'>VER CATÁLOGO COMPLETO (WEB HTML)</a></b>"
+            )
+            notifier.send_message(summary_msg)
 
 if __name__ == "__main__":
     main()
